@@ -1,0 +1,30 @@
+[
+    {
+        "img": "https://www.onceuponachef.com/images/2023/08/Beef-Tacos.jpg",
+        "productName": "Taco",
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit", 
+        "price": 4.60,
+        "hasDiscount": true
+    },
+     {
+        "img": "https://img.taste.com.au/R_dRdL7V/taste/2022/09/healthy-tacos-recipe-181113-1.jpg",
+        "productName": "Taco Black",
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit", 
+        "price": 4,
+         "hasDiscount": false
+    },
+     {
+        "img": "https://hips.hearstapps.com/hmg-prod/images/chicken-tacos-index-659443ccdaac5.jpg?crop=0.888888888888889xw:1xh;center,top&resize=1200:*",
+        "productName": "Taco XL",
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit", 
+        "price": 5.80,
+         "hasDiscount": true
+    },
+     {
+        "img": "https://danosseasoning.com/wp-content/uploads/2022/03/Beef-Tacos-1024x767.jpg",
+        "productName": "Taco S",
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit", 
+        "price": 6,
+         "hasDiscount": false
+    }
+]
