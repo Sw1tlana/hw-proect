@@ -1,12 +1,12 @@
-import ProductCard from './components/ProductCard';
-// import productCard  from './productCard.json';
-import './App.css';
+import ProductGallery from './components/ProductCard/ProductGallery';
+import productCard  from './productCard.json';
+
 function App() {
  
 
   return (
     <div>
-      <ProductCard/>
+      <ProductGallery productCard={productCard}/>
  </div>
       
   )
