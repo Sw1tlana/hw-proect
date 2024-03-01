@@ -2,6 +2,11 @@ import { useState } from 'react';
 import ProductGallery from './components/ProductCard/ProductGallery';
 import productCard  from './productCard.json';
 import Mailbox from './components/MailBox/Mailbox';
+import Description from './components/Description/Description';
+import Options from './components/Options/Options';
+import Feedback from './components/Feedback/Feedback';
+import Notification from './components/Notification/Notification';
+
 
 const emailsData = [
   { id: "1", email: "rex135@gmail.com"},
@@ -28,8 +33,49 @@ const handleMailBox = () => {
   setshowMailBox(prevState => !prevState);
 }
 
+const [feedbackCounts, setFeedbackCounts] = useState({
+  good: 0,
+	neutral: 0,
+	bad: 0
+})
+
+const updateFeedback = feedbackType => {
+  setFeedbackCounts({
+    ...feedbackCounts,
+ [feedbackType]: feedbackCounts[feedbackType] + 1
+  })
+ }
+
+ const { good, neutral, bad } = feedbackCounts;
+ const totalFeedback = good + neutral + bad;
+ const positivePercentage = totalFeedback > 0 ? Math.round(((good + neutral) / totalFeedback) * 100) : 0; 
+
+ const resetFeedBack = () => {
+ setFeedbackCounts({
+    good: 0,
+    neutral: 0,
+    bad: 0
+  })
+ }
+
   return (
     <div>
+      <Description/>
+      <Options
+       updateFeedback={updateFeedback}
+       totalFeedback={totalFeedback}
+       resetFeedBack={resetFeedBack}
+      />
+      { totalFeedback > 0 ?
+      <Feedback 
+      positivePercentage={positivePercentage}
+      feedbackCounts={feedbackCounts}
+      totalFeedback={totalFeedback}/>
+      : <Notification/>
+      } 
+      
+
+
       <h2>Email counts: {counter}</h2>
       <button type="button" onClick={handleMailBox}>{showMailBox ? "Hide" : "Show"} mail Box</button>
       {showMailBox ? (<Mailbox emails={emails} 
