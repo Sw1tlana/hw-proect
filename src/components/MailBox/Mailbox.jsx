@@ -1,9 +1,24 @@
+import { useEffect } from "react"
 
-const Mailbox = ({ emails, onLogEmail, onDeleteEmail, emailCounter }) => {
+const Mailbox = ({ emails, onLogEmail, onDeleteEmail, emailCounter, onClose }) => {
+  useEffect(() => {
+   const onKeyDown = (event) => {
+    if(event.code === "Escape") {
+      onClose()
+    }
+   }
+
+   window.addEventListener("keydown", onKeyDown);
+
+   return () => {
+    window.removeEventListener("keydown", onKeyDown);
+   }
+  }, [onClose]);
 
   return (
     <div>
         <h2>MailBox: {emailCounter}</h2>
+        <button type="button" onClick={onClose}>Clouse</button>
        <ul>
       {emails.map((email) => 
       <li key={email.id}>

@@ -34,6 +34,7 @@ const handleMailBox = () => {
       <button type="button" onClick={handleMailBox}>{showMailBox ? "Hide" : "Show"} mail Box</button>
       {showMailBox ? (<Mailbox emails={emails} 
       emailCounter={counter}
+      onClose={handleMailBox}
       onLogEmail={onLogEmail} 
       onDeleteEmail={handleDelete}/>) : null}
       <ProductGallery productCard={productCard}/>
