@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ProductGallery from './components/ProductCard/ProductGallery';
 import productCard  from './productCard.json';
 import Mailbox from './components/MailBox/Mailbox';
@@ -33,11 +33,17 @@ const handleMailBox = () => {
   setshowMailBox(prevState => !prevState);
 }
 
-const [feedbackCounts, setFeedbackCounts] = useState({
+const initialisationsFeedBackCounts = JSON.parse(localStorage.getItem("feedbackCounts")) || {
   good: 0,
 	neutral: 0,
 	bad: 0
-})
+}
+
+const [feedbackCounts, setFeedbackCounts] = useState(initialisationsFeedBackCounts);
+
+useEffect(() => {
+localStorage.setItem("feedbackCounts", JSON.stringify(feedbackCounts));
+}, [feedbackCounts]);
 
 const updateFeedback = feedbackType => {
   setFeedbackCounts({
