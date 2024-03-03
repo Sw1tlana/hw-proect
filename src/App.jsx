@@ -6,6 +6,7 @@ import Description from './components/Description/Description';
 import Options from './components/Options/Options';
 import Feedback from './components/Feedback/Feedback';
 import Notification from './components/Notification/Notification';
+import LangSwitcher from './components/LangSwitcher/LangSwitcher';
 
 
 const emailsData = [
@@ -64,6 +65,7 @@ const updateFeedback = feedbackType => {
   })
  }
 
+
   return (
     <div>
       <Description/>
@@ -79,9 +81,8 @@ const updateFeedback = feedbackType => {
       totalFeedback={totalFeedback}/>
       : <Notification/>
       } 
-      
 
-
+  <LangSwitcher/>
       <h2>Email counts: {counter}</h2>
       <button type="button" onClick={handleMailBox}>{showMailBox ? "Hide" : "Show"} mail Box</button>
       {showMailBox ? (<Mailbox emails={emails} 
