@@ -1,97 +1,52 @@
-import { useEffect, useState } from 'react';
-import ProductGallery from './components/ProductCard/ProductGallery';
-import productCard  from './productCard.json';
-import Mailbox from './components/MailBox/Mailbox';
-import Description from './components/Description/Description';
-import Options from './components/Options/Options';
-import Feedback from './components/Feedback/Feedback';
-import Notification from './components/Notification/Notification';
-import LangSwitcher from './components/LangSwitcher/LangSwitcher';
+import ContactList from './components/ContactList/ContactList';
+import ContactForm from './components/ContactForm/ContactForm';
+import { useState, useEffect } from 'react';
+import { nanoid } from 'nanoid';
+import css from './App.module.css';
+import SearchBox from './components/SearchBox/SearchBox';
 
-
-const emailsData = [
-  { id: "1", email: "rex135@gmail.com"},
-  { id: "2", email: "asdg@SDFH.COM"},
-  { id: "3", email: "xcvbh@zsgsdfhj.com"},
+const contactFormData = [
+  {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56'},
+  {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
+  {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
+  {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
 ]
 
+
 function App() {
-const [counter, setCounter] = useState(0);
-const [emails, setEmails] = useState(emailsData);
-const [showMailBox, setshowMailBox] = useState(false);
+const [contacts, setContacts ] = useState(contactFormData);
+const [searchText, setSearchText] = useState("");
+const [filteredContacts, setFilteredContacts] = useState([]);
 
- const onLogEmail = () => {
-  console.log('Email.for sent')
-  setCounter(counter + 1);
- }
-
- const handleDelete = (mailId) => {
-  console.log("mailId", mailId);
-  setEmails(prevState => prevState.filter((email) => email.id !== mailId));
+const handleAddContact = (newContact) => {
+  setContacts([...contacts, {...newContact, id: nanoid()}]);
 }
 
-const handleMailBox = () => {
-  setshowMailBox(prevState => !prevState);
+const handleDeleteContacts = (contactId) => {
+ setContacts((prevState) => {
+  return prevState.filter((contact) => contact.id !== contactId)
+})
 }
 
-const initialisationsFeedBackCounts = JSON.parse(localStorage.getItem("feedbackCounts")) || {
-  good: 0,
-	neutral: 0,
-	bad: 0
+const handleSearch = (text) => {
+  setSearchText(text);
 }
-
-const [feedbackCounts, setFeedbackCounts] = useState(initialisationsFeedBackCounts);
 
 useEffect(() => {
-localStorage.setItem("feedbackCounts", JSON.stringify(feedbackCounts));
-}, [feedbackCounts]);
+  const filteredContacts = contacts.filter(contact => contact.name.toLowerCase()
+  .includes(searchText.toLowerCase()));
+  setFilteredContacts(filteredContacts);
+}, [searchText, contacts]);
 
-const updateFeedback = feedbackType => {
-  setFeedbackCounts({
-    ...feedbackCounts,
- [feedbackType]: feedbackCounts[feedbackType] + 1
-  })
- }
-
- const { good, neutral, bad } = feedbackCounts;
- const totalFeedback = good + neutral + bad;
- const positivePercentage = totalFeedback > 0 ? Math.round(((good + neutral) / totalFeedback) * 100) : 0; 
-
- const resetFeedBack = () => {
- setFeedbackCounts({
-    good: 0,
-    neutral: 0,
-    bad: 0
-  })
- }
 
 
   return (
-    <div>
-      <Description/>
-      <Options
-       updateFeedback={updateFeedback}
-       totalFeedback={totalFeedback}
-       resetFeedBack={resetFeedBack}
-      />
-      { totalFeedback > 0 ?
-      <Feedback 
-      positivePercentage={positivePercentage}
-      feedbackCounts={feedbackCounts}
-      totalFeedback={totalFeedback}/>
-      : <Notification/>
-      } 
-
-  <LangSwitcher/>
-      <h2>Email counts: {counter}</h2>
-      <button type="button" onClick={handleMailBox}>{showMailBox ? "Hide" : "Show"} mail Box</button>
-      {showMailBox ? (<Mailbox emails={emails} 
-      emailCounter={counter}
-      onClose={handleMailBox}
-      onLogEmail={onLogEmail} 
-      onDeleteEmail={handleDelete}/>) : null}
-      <ProductGallery productCard={productCard}/>
- </div>
+    <div className={css.container}>
+        <h1>Phonebook</h1>
+        <ContactForm handleAddContact={handleAddContact}/>
+        <SearchBox searchText={searchText} handleSearch={handleSearch}/>
+        <ContactList contacts={filteredContacts} onDeleteContact={handleDeleteContacts}/>
+    </div>
       
   )
 }
