@@ -1,5 +1,8 @@
 
-const Contact = ({ name, number }) => {
+const Contact = ({ id, name, number, onDelete }) => {
+  const handleDelete = () => {
+    onDelete(id);
+  }
     return (
       <div>
         <li >
@@ -8,6 +11,7 @@ const Contact = ({ name, number }) => {
               <p>Name: {name}</p>
               <p>Number: {number}</p>
             </div>
+            <button type="button" onClick={handleDelete}>Delete</button>
           </div>
         </li>
       </div>
