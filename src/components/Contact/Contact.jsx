@@ -1,21 +1,17 @@
-const Contact= ({ id, name, number, onDelete }) => {
-    const handleDelete = () => {
-        onDelete(id);
-    }
-  return (
-    <div>
-        <li>
+
+const Contact = ({ name, number }) => {
+    return (
+      <div>
+        <li >
+          <div>
             <div>
-                <div>
-                <p>{name}</p>
-                <p>{number}</p>
+              <p>Name: {name}</p>
+              <p>Number: {number}</p>
             </div>
-            <button type="button" onClick={handleDelete}>Delete</button>
-            </div>
+          </div>
         </li>
-
-    </div>
-  )
-}
-
-export default Contact
+      </div>
+    );
+  };
+  
+  export default Contact; 

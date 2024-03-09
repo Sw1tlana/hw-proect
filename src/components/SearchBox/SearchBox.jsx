@@ -1,4 +1,4 @@
-const SearchBox = ({ searchText, handleSearch}) => {
+const SearchBox = ({ searchText, handleSearch }) => {
   return (
     <div>
         <label>
