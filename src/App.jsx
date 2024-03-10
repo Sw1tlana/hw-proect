@@ -13,7 +13,12 @@ const contactFormData = [
 ];
 
 function App() {
-  const [contacts,setContacts] = useState(contactFormData);
+    const storageContacts = () => {
+    const storageContacts = JSON.parse(localStorage.getItem('contacts'));
+    return storageContacts || contactFormData;
+    }
+
+  const [contacts,setContacts] = useState(storageContacts());
   const [searchText, setSearchText] = useState('');
   const [filteredContacts, setFilteredContacts] = useState([]);
 
@@ -26,8 +31,8 @@ const handleSearch = (text) => {
 }
 
 const onDeleteContact = (contactId) => {
-  setContacts((prevState) => {
-    return prevState((contact) => contact.id !== contactId);
+  setContacts(prevState => {
+    return prevState.filter(contact => contact.id !== contactId);
   })
 }
 
@@ -37,6 +42,10 @@ useEffect(() => {
   );
   setFilteredContacts(filteredContacts);
 }, [contacts, searchText]);
+
+useEffect(() => {
+  localStorage.setItem('contacts', JSON.stringify(contacts))
+},[contacts]);
 
   return (
     <div className={css.container}>
