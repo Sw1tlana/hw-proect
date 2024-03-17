@@ -1,58 +1,80 @@
-import css from './App.module.css';
-import ContactForm from './components/ContactForm/ContactForm';
-import SearchBox from './components/SearchBox/SearchBox';
-import ContactList from './components/ContactList/ContactList';
-import { useState, useEffect } from 'react';
-import { nanoid } from 'nanoid';
+// import css from '../App.module.css';
+import { useEffect, useState } from "react";
+import ThreeDots from "./components/Loader/Loader";
+import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
+import ImageGallery from "./components/ImageGallery/ImageGallery";
+import SearchBar from "./components/SearchBar/SearchBar";
+import LoaderMoreBtn from "./components/LoaderMoreBtn/LoaderMoreBtn";
+import ImageModal from "./components/ImageModal/ImageModal";
 
-const contactFormData = [
-  { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-  { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-  { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-  { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-];
+import { requestPhoto } from "./services/api";
+import { Toaster } from "react-hot-toast";
 
 function App() {
-    const storageContacts = () => {
-    const storageContacts = JSON.parse(localStorage.getItem('contacts'));
-    return storageContacts || contactFormData;
+  const [photos, setPhotos] = useState(null);
+  const [isLoader, setIsLoader] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(null);
+  const [page, setPage] = useState(1);
+  const [modalImageUrl, setModalImageUrl] = useState(null);
+
+  const onSearchQuery = (query) => {
+    setSearchQuery(query);
+    setPage(1);
+  }
+
+
+useEffect(() => {
+if (searchQuery === null) return;   
+  async function fetchFoto() {
+    try {
+    setIsLoader(true);
+    const data = await requestPhoto(searchQuery);
+    setPhotos(data);
+    } catch(error) {
+     setIsError(true);
+    } finally {
+      setIsLoader(false)
     }
+  }
+  fetchFoto();
+}, [searchQuery]);  
 
-  const [contacts,setContacts] = useState(storageContacts());
-  const [searchText, setSearchText] = useState('');
-  const [filteredContacts, setFilteredContacts] = useState([]);
 
-const handleAddContacts = (newContact) => {
-  setContacts([...contacts, {...newContact, id: nanoid()}]);
+const loadMoreFotos = async () => {
+  try {
+    setIsLoader(true);
+    const nextPage = page + 1;
+    const newData = searchQuery ?
+    await requestPhoto(searchQuery, nextPage) :
+    await requestPhoto(nextPage);
+    setPhotos((prevPhotos) => [...prevPhotos, ...newData]);
+    setPage(nextPage);
+  } catch(error) {
+    setIsError(true);
+  } finally {
+    setIsLoader(false);
+  }
 }
 
-const handleSearch = (text) => {
-  setSearchText(text);
+function openModal(imageUrl) {
+  setModalImageUrl(imageUrl);
 }
 
-const onDeleteContact = (contactId) => {
-  setContacts(prevState => {
-    return prevState.filter(contact => contact.id !== contactId);
-  })
+function closeModal() {
+  setModalImageUrl(null);
 }
 
-useEffect(() => {
-  const filteredContacts = contacts.filter(contact => 
-    contact.name.toLowerCase().includes(searchText.toLowerCase())
-  );
-  setFilteredContacts(filteredContacts);
-}, [contacts, searchText]);
-
-useEffect(() => {
-  localStorage.setItem('contacts', JSON.stringify(contacts))
-},[contacts]);
 
   return (
-    <div className={css.container}>
-      <h1>Phonebook</h1>
-      <ContactForm handleAddContacts={handleAddContacts}/>
-      <SearchBox searchText={searchText} handleSearch={handleSearch}/>
-      <ContactList contacts={filteredContacts} onDeleteContact={onDeleteContact}/>
+    <div>
+      <SearchBar onSubmit={onSearchQuery}/>
+      <Toaster/>
+      <ImageGallery photos={photos} onImageClick={openModal}/>
+      {isLoader && <ThreeDots/>}
+      {isError && <ErrorMessage/>}
+      {photos && photos.length > 0 && <LoaderMoreBtn onClick={loadMoreFotos}/>}
+      {modalImageUrl && <ImageModal imageUrl={modalImageUrl} closeModal={closeModal}/>}
     </div>
   );
 }
