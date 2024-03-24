@@ -14,12 +14,12 @@ const HomePage = () => {
             try {
                 setIsLoading(true);
                 setIsError(false);
-                const data = queryMoviesPages(data);
+                const data = await queryMoviesPages();
                 setMovies(data);
             } catch (error) {
                 setIsError(true);
             } finally {
-                setIsLoading();
+                setIsLoading(false);
             }
         }
            fetchMovies();

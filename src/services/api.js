@@ -18,7 +18,7 @@ export const queryMoviesPages = async () => {
 
 
 export const queryMoviesPagesById = async (movieId) => {
-    const { data } = await axios.get(`https://api.themoviedb.org/3/trending/movie/${movieId}`, {
+    const { data } = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, {
         params: {
             language: 'en-US',
             api_key: KEY_API
@@ -29,4 +29,48 @@ export const queryMoviesPagesById = async (movieId) => {
         
     });
     return data;
+}
+
+export const queryMoviesPagesByCast = async (movieId) => {
+    const { data } = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits`, {
+        params: {
+            language: 'en-US',
+            api_key: KEY_API
+        },
+        headers: {
+            Authorization: `Bearer ${ACCESS_KEY_API}`
+        }
+        
+    });
+    return data;
+}
+
+export const queryMoviesPagesByReviews = async (movieId) => {
+    const { data } = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/reviews`, {
+        params: {
+            language: 'en-US',
+            api_key: KEY_API
+        },
+        headers: {
+            Authorization: `Bearer ${ACCESS_KEY_API}`
+        }
+        
+    });
+    return data;
+}
+
+
+export const queryMoviesPagesByQury = async (query) => {
+    const { data } = await axios.get(`https://api.themoviedb.org/3/search/movie`, {
+        params: {
+            language: 'en-US',
+            api_key: KEY_API,
+            query: query
+        },
+        headers: {
+            Authorization: `Bearer ${ACCESS_KEY_API}`
+        }
+        
+    });
+    return data.results;
 }
