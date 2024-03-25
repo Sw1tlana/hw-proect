@@ -1,17 +1,20 @@
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import Loader from "../../components/Loader/Loader";
-import { useEffect, useState } from "react";
-import { Link, Route, Routes, useParams } from "react-router-dom";
+import { useEffect, useState, useRef, lazy } from "react";
+import { Link, Route, Routes, useParams, useLocation, Suspense } from "react-router-dom";
 import { queryMoviesPagesById } from '../../services/api';
 
-import MovieCast from '../../components/MovieCast/MovieCast';
-import MovieReviews from '../../components/MovieReviews/MovieReviews';
+const MovieCast = lazy(() => import('../../components/MovieCast/MovieCast'));
+const MovieReviews = lazy(() => import('../../components/MovieCast/MovieCast'));
+
 
 const MovieDetailsPage = () => {
     const { movieId } = useParams();
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
     const [movieData, setMovieData] = useState(null);
+    const location = useLocation();
+    const backLinkRef = useRef(location.state ?? '/');
 
     useEffect(() => {
         const fetchDetailsPage = async () => {
@@ -34,6 +37,8 @@ const MovieDetailsPage = () => {
           {isLoading && <Loader />}
           {isError && <ErrorMessage/>}
           {movieData !== null &&
+          <div>
+           <Link to={backLinkRef.current}>Bag ref</Link>
           <div >
             <img src={`https://image.tmdb.org/t/p/w500${movieData.poster_path}`} alt={movieData.title} />
               <ul>
@@ -45,19 +50,23 @@ const MovieDetailsPage = () => {
                 </li>
                 )}
             </ul>
+          </div>
           </div>}
-          {movieData !== null && (   
           <div>
-            <Link to="cast">Cast</Link>
-            <Link to="reviews">Reviews</Link>        
-            </div> 
-            )}
-   
-            <Routes>
-                <Route path="cast" element={<MovieCast/>}/>
-                <Route path="reviews" element={<MovieReviews/>}/>
-            </Routes>       
-    </div>
+  {movieData !== null && (   
+    <div>
+      <Link to="cast">Cast</Link>
+      <Link to="reviews">Reviews</Link>        
+    </div> 
+  )}
+  <Suspense fallback={<Loader/>}>
+    <Routes>
+      <Route path="cast" element={<MovieCast/>}/>
+      <Route path="reviews" element={<MovieReviews/>}/>
+    </Routes> 
+  </Suspense>  
+</div>
+          </div>    
   )
 }
 
