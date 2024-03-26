@@ -5,7 +5,7 @@ import { Link, Route, Routes, useParams, useLocation, Suspense } from "react-rou
 import { queryMoviesPagesById } from '../../services/api';
 
 const MovieCast = lazy(() => import('../../components/MovieCast/MovieCast'));
-const MovieReviews = lazy(() => import('../../components/MovieCast/MovieCast'));
+const MovieReviews = lazy(() => import('../../components/MovieReviews/MovieReviews'));
 
 
 const MovieDetailsPage = () => {
@@ -14,15 +14,15 @@ const MovieDetailsPage = () => {
     const [isError, setIsError] = useState(false);
     const [movieData, setMovieData] = useState(null);
     const location = useLocation();
-    const backLinkRef = useRef(location.state ?? '/');
+    const backLinkRef = useRef(location.state ?? '/search');
 
     useEffect(() => {
         const fetchDetailsPage = async () => {
         try {
             setIsLoading(true);
             setIsError(false);
-            const data = await queryMoviesPagesById(movieId);
-            setMovieData(data);
+          const data = await queryMoviesPagesById(movieId);
+          setMovieData(data);
         } catch (error) {
             setIsError(true);
         } finally {
