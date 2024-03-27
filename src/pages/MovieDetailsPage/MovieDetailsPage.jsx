@@ -1,8 +1,10 @@
+import { useEffect, useRef, Suspense, lazy } from "react";
+import { NavLink, Route, Routes, useParams, useLocation } from "react-router-dom";
+import { requestMoviesById } from "../../services/api";
+
+import Loader from  '../../components/Loader/Loader';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
-import Loader from "../../components/Loader/Loader";
-import { useEffect, useState, useRef, lazy } from "react";
-import { Link, Route, Routes, useParams, useLocation, Suspense } from "react-router-dom";
-import { queryMoviesPagesById } from '../../services/api';
+import { useDispatch, useSelector } from "react-redux";
 
 const MovieCast = lazy(() => import('../../components/MovieCast/MovieCast'));
 const MovieReviews = lazy(() => import('../../components/MovieReviews/MovieReviews'));
@@ -10,63 +12,98 @@ const MovieReviews = lazy(() => import('../../components/MovieReviews/MovieRevie
 
 const MovieDetailsPage = () => {
     const { movieId } = useParams();
-    const [isLoading, setIsLoading] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [movieData, setMovieData] = useState(null);
+    // const [movieData, setMovieData] = useState(null);
+    // const [isLoading, setIsLoading] = useState(false);
+    // const [isError, setIsError] = useState(false);
     const location = useLocation();
-    const backLinkRef = useRef(location.state ?? '/search');
+    const backLinkRef = useRef(location.state ?? "/search");
+
+    const dispatch = useDispatch();
+    const movieData = useSelector((state) => state.movieDetails.movieData);
+    const isLoading = useSelector((state) => state.movieDetails.isLoading);
+    const isError = useSelector((state) => state.movieDetails.isError);
 
     useEffect(() => {
-        const fetchDetailsPage = async () => {
-        try {
-            setIsLoading(true);
-            setIsError(false);
-          const data = await queryMoviesPagesById(movieId);
-          setMovieData(data);
-        } catch (error) {
-            setIsError(true);
-        } finally {
-            setIsLoading(false);
-         }
+        const fetchMoviesId = async () => {
+            try {
+                // setIsLoading(true);
+                // setIsError(false);
+                const loadigEnableAction = {
+                  type:  "details/setIsLoading",
+                  payload: true
+                };
+                dispatch(loadigEnableAction);
+
+                const data = await requestMoviesById(movieId);
+                const movieDataAction = {
+                  type: "details/setMovieData",
+                  payload: data
+                };
+                dispatch(movieDataAction);
+                // setMovieData(data);
+
+            } catch (error) {
+                // setIsError(true);
+                const errorAction = {
+                  type: "details/setIsError",
+                  payload: true
+                };
+                dispatch(errorAction);
+
+            } finally {
+                // setIsLoading(false);
+                const loadigDisableAction = {
+                  type:  "details/setIsLoading",
+                  payload: false
+                };
+                dispatch(loadigDisableAction);
+            }
         }
-        fetchDetailsPage();
-    }, [movieId])
+        fetchMoviesId();
+    }, [movieId, dispatch]);
 
   return (
       <div>
           {isLoading && <Loader />}
-          {isError && <ErrorMessage/>}
+          {isError && <ErrorMessage />}
           {movieData !== null &&
+        <section>
+
+          <NavLink to={backLinkRef.current}>Go back</NavLink>
+
           <div>
-           <Link to={backLinkRef.current}>Bag ref</Link>
-          <div >
             <img src={`https://image.tmdb.org/t/p/w500${movieData.poster_path}`} alt={movieData.title} />
               <ul>
                   <li><h2>{movieData.title}</h2></li>
-                  <li><p><span >Overview: </span>{movieData.overview}</p></li>
-                  <li><p><span >User Score: </span>{movieData.vote_average}</p></li>
+                  <li><p><span>Overview: </span>{movieData.overview}</p></li>
+                  <li><p><span>User Score: </span>{movieData.vote_average}</p></li>
                   {movieData.genres && (<li><p>
                   <span>Genres: </span>{movieData.genres.map(genre => genre.name).join(', ')}</p>
                 </li>
                 )}
             </ul>
           </div>
-          </div>}
+        <h2>Additional information</h2>
+        </section>}
+      <div>
+          {movieData && (
+            <>
+              <NavLink to="cast">Cast</NavLink>
+              <NavLink to="reviews">Reviews</NavLink>
+            </>
+          )}
+
+          </div>
           <div>
-  {movieData !== null && (   
-    <div>
-      <Link to="cast">Cast</Link>
-      <Link to="reviews">Reviews</Link>        
-    </div> 
-  )}
-  <Suspense fallback={<Loader/>}>
-    <Routes>
-      <Route path="cast" element={<MovieCast/>}/>
-      <Route path="reviews" element={<MovieReviews/>}/>
-    </Routes> 
-  </Suspense>  
-</div>
-          </div>    
+            <Suspense fallback={<Loader/>}>
+              <Routes>
+                <Route path="cast" element={<MovieCast />} />
+                <Route path="reviews" element={<MovieReviews />} />
+              </Routes>
+            </Suspense>
+        </div>
+       
+      </div>
   )
 }
 

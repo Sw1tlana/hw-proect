@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
-import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import { useEffect, useState } from "react"
+import { requestMovies } from "../../services/api"
+
 import Loader from '../../components/Loader/Loader';
-import { queryMoviesPages } from '../../services/api';
-import MovieList from '../../components/MovieList/MovieList';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import MovieList from "../../components/MovieList/MovieList";
+
 
 const HomePage = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -14,7 +16,7 @@ const HomePage = () => {
             try {
                 setIsLoading(true);
                 setIsError(false);
-                const data = await queryMoviesPages();
+                const data = await requestMovies();
                 setMovies(data);
             } catch (error) {
                 setIsError(true);
@@ -22,14 +24,15 @@ const HomePage = () => {
                 setIsLoading(false);
             }
         }
-           fetchMovies();
+        fetchMovies();
     }, []);
 
   return (
       <div>
-          {isLoading && <Loader />}
-          {isError && <ErrorMessage />}
-          <MovieList movies={movies} />
+       <h1>Trending today</h1>
+        {isLoading && <Loader />}
+        {isError && <ErrorMessage />}
+        <MovieList movies={movies}/>
       </div>
   )
 }
