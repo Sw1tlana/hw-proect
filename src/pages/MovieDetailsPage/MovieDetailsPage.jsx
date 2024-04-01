@@ -5,6 +5,7 @@ import { requestMoviesById } from "../../services/api";
 import Loader from  '../../components/Loader/Loader';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import { useDispatch, useSelector } from "react-redux";
+import { setIsError, setIsLoading, setMovieData } from "../../redux/store";
 
 const MovieCast = lazy(() => import('../../components/MovieCast/MovieCast'));
 const MovieReviews = lazy(() => import('../../components/MovieReviews/MovieReviews'));
@@ -26,37 +27,17 @@ const MovieDetailsPage = () => {
     useEffect(() => {
         const fetchMoviesId = async () => {
             try {
-                // setIsLoading(true);
-                // setIsError(false);
-                const loadigEnableAction = {
-                  type:  "details/setIsLoading",
-                  payload: true
-                };
-                dispatch(loadigEnableAction);
+                dispatch(setIsLoading(true));
 
                 const data = await requestMoviesById(movieId);
-                const movieDataAction = {
-                  type: "details/setMovieData",
-                  payload: data
-                };
-                dispatch(movieDataAction);
+                dispatch(setMovieData(data));
                 // setMovieData(data);
 
             } catch (error) {
-                // setIsError(true);
-                const errorAction = {
-                  type: "details/setIsError",
-                  payload: true
-                };
-                dispatch(errorAction);
+                dispatch(setIsError(true));
 
             } finally {
-                // setIsLoading(false);
-                const loadigDisableAction = {
-                  type:  "details/setIsLoading",
-                  payload: false
-                };
-                dispatch(loadigDisableAction);
+                dispatch(setIsLoading(false));
             }
         }
         fetchMoviesId();

@@ -1,10 +1,35 @@
-import { combineReducers, createStore } from "redux";
-import { devToolsEnhancer } from "@redux-devtools/extension";
 import { movieDetailsReducer } from "./moviDetailsReducer";
+import { configureStore } from "@reduxjs/toolkit";
 
-const rootReducer = combineReducers({
-    movieDetails: movieDetailsReducer
+import {
+    persistStore,
+    persistReducer,
+    FLUSH,
+    REHYDRATE,
+    PAUSE,
+    PERSIST,
+    PURGE,
+    REGISTER,
+  } from "redux-persist";
+  import storage from "redux-persist/lib/storage";
+
+  const contactsConfig = {
+    key: "contacts",
+    storage,
+    whitelist: ["items"],
+  //   blacklist: ['contacts', "isError", "isLoading", "productData"],
+  };
+  
+  const movieConfigReducer = persistReducer(contactsConfig, movieDetailsReducer);
+
+export const store = configureStore({
+  reducer: movieConfigReducer,
+  
+  middleware: (getDefaultMiddleware) =>
+  getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+    },
+  }),
 });
-const enhancer = devToolsEnhancer();
-
-export const store = createStore(rootReducer, enhancer);
+export const persistor = persistStore(store);
